@@ -9,3 +9,26 @@ exports.getTasks = async (req, res) => {
   const tasks = await taskService.getAll(req.user);
   res.json(tasks);
 };
+
+exports.updateTask = async (req, res) => {
+  try {
+    const updatedTask = await taskService.updateTaskById(
+      req.params.id,
+      req.user,
+      req.body
+    );
+
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(403).json({ message: err.message });
+  }
+};
+
+exports.deleteTask = async (req, res) => {
+  try {
+    await taskService.deleteTaskById(req.params.id, req.user);
+    res.json({ message: "Task deleted successfully" });
+  } catch (err) {
+    res.status(403).json({ message: err.message });
+  }
+};
