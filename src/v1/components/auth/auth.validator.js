@@ -38,3 +38,14 @@ exports.loginValidator = (req, res, next) => {
 
   next();
 };
+exports.refreshTokenValidator = (req, res, next) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json({
+      message: "Refresh token is required",
+    });
+  }
+
+  next();
+};

@@ -9,3 +9,12 @@ exports.login = async (req, res) => {
   const data = await authService.login(req.body);
   res.json(data);
 };
+
+exports.refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  const data = await authService.refreshAccessToken(refreshToken);
+
+  res.json(data);
+};
+

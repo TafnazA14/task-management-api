@@ -4,6 +4,7 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../../../utils/jwt");
+const jwt = require("jsonwebtoken");
 exports.register = async ({ name, email, password }) => {
   const hashed = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hashed });
@@ -22,4 +23,23 @@ exports.login = async ({ email, password }) => {
     refreshToken: generateRefreshToken({ id: user._id }),
     user: { id: user._id, email: user.email, role: user.role },
   };
+};
+
+exports.refreshAccessToken = async (refreshToken) => {
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
+
+    // issue NEW access token
+    const newAccessToken = generateAccessToken({
+      id: decoded.id,
+      role: decoded.role || "user",
+    });
+
+    return { token: newAccessToken };
+  } catch (err) {
+    throw new Error("Invalid or expired refresh token");
+  }
 };
